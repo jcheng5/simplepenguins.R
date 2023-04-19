@@ -4,17 +4,18 @@ library(dplyr)
 library(ggplot2)
 
 df <- readr::read_csv("penguins.csv")
-species <- unique(df$Species)
+# Find subset of columns that are suitable for scatter plot
+df_num <- df |> select(where(is.numeric), -Year)
 
 ui <- page_fillable(theme = bs_theme(bootswatch = "minty"),
   layout_sidebar(fillable = TRUE,
     sidebar(
-      varSelectInput("xvar", "X variable", df, selected = "Bill Length (mm)"),
-      varSelectInput("yvar", "Y variable", df, selected = "Bill Depth (mm)"),
-      checkboxGroupInput(
-        "species", "Filter by species", species, selected = species
+      varSelectInput("xvar", "X variable", df_num, selected = "Bill Length (mm)"),
+      varSelectInput("yvar", "Y variable", df_num, selected = "Bill Depth (mm)"),
+      checkboxGroupInput("species", "Filter by species",
+        choices = unique(df$Species), selected = unique(df$Species)
       ),
-      hr(),
+      hr(), # Add a horizontal rule
       checkboxInput("by_species", "Show species", TRUE),
       checkboxInput("show_margins", "Show marginal plots", TRUE),
       checkboxInput("smooth", "Add smoother"),
@@ -38,15 +39,11 @@ server <- function(input, output, session) {
     )
 
     if (input$show_margins) {
-      p <- ggExtra::ggMarginal(
-        p,
-        type = if (input$by_species) "density" else "histogram",
-        margins = "both",
-        size = 8,
-        groupColour = input$by_species,
-        groupFill = input$by_species
-      )
+      margin_type <- if (input$by_species) "density" else "histogram"
+      p <- p |> ggExtra::ggMarginal(type = margin_type, margins = "both",
+        size = 8, groupColour = input$by_species, groupFill = input$by_species)
     }
+    
     p
   }, res = 100)
 }
