@@ -2,17 +2,13 @@ FROM rocker/shiny-verse:latest
 
 WORKDIR /code
 
-# Cache doesn't help for single-use containers (and huggingface
-# spaces don't let us write to renv's default cache path)
-ENV RENV_CONFIG_CACHE_ENABLED=FALSE
+RUN install2.r --ncpus 2 --error \
+    ggExtra \
+    bslib
 
-RUN R --quiet -e "install.packages('renv'); renv::init()"
-
-COPY ./renv.lock /code/renv.lock
-
-RUN R --quiet -e "renv::restore()"
-RUN R --quiet -e "renv::install('rstudio/httpuv@ping')"
-RUN ls
+# RUN installGithub.r \
+#     rstudio/shiny \
+#     rstudio/httpuv@ping
 
 COPY . .
 
