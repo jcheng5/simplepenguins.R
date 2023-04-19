@@ -11,6 +11,7 @@ RUN R --quiet -e "install.packages('renv'); renv::init()"
 COPY ./renv.lock /code/renv.lock
 
 RUN R --quiet -e "renv::restore()"
+RUN R --quiet -e "renv::install('rstudio/httpuv@ping')"
 RUN ls
 
 COPY . .
