@@ -10,7 +10,7 @@ RUN install2.r --error \
 # Install development packages from GitHub
 RUN installGithub.r \
     rstudio/bslib \
-    rstudio/httpuv@ping
+    rstudio/httpuv
 
 COPY . .
 
