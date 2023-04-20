@@ -2,13 +2,15 @@ FROM rocker/shiny-verse:latest
 
 WORKDIR /code
 
-RUN install2.r --ncpus 2 --error \
+# Install stable packages from CRAN
+RUN install2.r --error \
     ggExtra \
-    bslib
+    shiny
 
-# RUN installGithub.r \
-#     rstudio/shiny \
-#     rstudio/httpuv@ping
+# Install development packages from GitHub
+RUN installGithub.r \
+    rstudio/bslib \
+    rstudio/httpuv@ping
 
 COPY . .
 
