@@ -7,21 +7,19 @@ df <- readr::read_csv("penguins.csv")
 # Find subset of columns that are suitable for scatter plot
 df_num <- df |> select(where(is.numeric), -Year)
 
-ui <- page_fillable(theme = bs_theme(bootswatch = "minty"),
-  layout_sidebar(fillable = TRUE,
-    sidebar(
-      varSelectInput("xvar", "X variable", df_num, selected = "Bill Length (mm)"),
-      varSelectInput("yvar", "Y variable", df_num, selected = "Bill Depth (mm)"),
-      checkboxGroupInput("species", "Filter by species",
-        choices = unique(df$Species), selected = unique(df$Species)
-      ),
-      hr(), # Add a horizontal rule
-      checkboxInput("by_species", "Show species", TRUE),
-      checkboxInput("show_margins", "Show marginal plots", TRUE),
-      checkboxInput("smooth", "Add smoother"),
+ui <- page_sidebar(
+  sidebar = sidebar(
+    varSelectInput("xvar", "X variable", df_num, selected = "Bill Length (mm)"),
+    varSelectInput("yvar", "Y variable", df_num, selected = "Bill Depth (mm)"),
+    checkboxGroupInput("species", "Filter by species",
+      choices = unique(df$Species), selected = unique(df$Species)
     ),
-    plotOutput("scatter")
-  )
+    hr(), # Add a horizontal rule
+    checkboxInput("by_species", "Show species", TRUE),
+    checkboxInput("show_margins", "Show marginal plots", TRUE),
+    checkboxInput("smooth", "Add smoother"),
+  ),
+  plotOutput("scatter")
 )
 
 server <- function(input, output, session) {
